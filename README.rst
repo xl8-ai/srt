@@ -12,10 +12,6 @@
   :target: https://coveralls.io/github/cdown/srt?branch=develop
   :alt: Coverage
 
-.. |libraries| image:: https://img.shields.io/librariesio/github/cdown/srt.svg?label=dependencies
-  :target: https://libraries.io/github/cdown/srt
-  :alt: Dependencies
-
 srt is a tiny but featureful Python library for parsing, modifying, and
 composing `SRT files`_. Take a look at the quickstart_ for a basic overview of
 the library. `Detailed API documentation`_ is also available.
