@@ -377,8 +377,9 @@ def parse(srt, ignore_errors=False):
 
         try:
             new_line_count_idx, additional_new_lines = 1, -2
-            while srt[match.span()[1] - new_line_count_idx] == '\n':
-                additional_new_lines += 1
+            while srt[match.span()[1] - new_line_count_idx] in ('\n', '\r'):
+                if srt[match.span()[1] - new_line_count_idx] == '\n':
+                    additional_new_lines += 1
                 new_line_count_idx += 1
         except Exception:
             additional_new_lines = 0
