@@ -113,12 +113,13 @@ class Subtitle(object):
     """
 
     # pylint: disable=R0913
-    def __init__(self, index, start, end, content, proprietary=""):
+    def __init__(self, index, start, end, content, proprietary="", additional_new_lines=0):
         self.index = index
         self.start = start
         self.end = end
         self.content = content
         self.proprietary = proprietary
+        self.additional_new_lines = additional_new_lines
 
     def __hash__(self):
         return hash(frozenset(vars(self).items()))
@@ -160,12 +161,14 @@ class Subtitle(object):
         if strict:
             output_content = make_legal_content(output_content)
 
+        additional_new_lines = "\n" * self.additional_new_lines
         if eol is None:
             eol = "\n"
         elif eol != "\n":
             output_content = output_content.replace("\n", eol)
+            additional_new_lines = additional_new_lines.replace("\n", eol)
 
-        template = "{idx}{eol}{start} --> {end}{prop}{eol}{content}{eol}{eol}"
+        template = "{idx}{eol}{start} --> {end}{prop}{eol}{content}{eol}{eol}{anl}"
         return template.format(
             idx=self.index,
             start=timedelta_to_srt_timestamp(self.start),
@@ -173,6 +176,7 @@ class Subtitle(object):
             prop=output_proprietary,
             content=output_content,
             eol=eol,
+            anl=additional_new_lines,
         )
 
 
@@ -372,6 +376,14 @@ def parse(srt, ignore_errors=False):
         content = content.replace("\r\n", "\n")  # pytype: disable=attribute-error
 
         try:
+            new_line_count_idx, additional_new_lines = 1, -2
+            while srt[match.span()[1] - new_line_count_idx] == '\n':
+                additional_new_lines += 1
+                new_line_count_idx += 1
+        except Exception:
+            additional_new_lines = 0
+
+        try:
             raw_index = int(raw_index)
         except ValueError:
             # Index 123.4. Handled separately, since it's a rare case and we
@@ -386,6 +398,7 @@ def parse(srt, ignore_errors=False):
             end=srt_timestamp_to_timedelta(raw_end),
             content=content,
             proprietary=proprietary,
+            additional_new_lines=additional_new_lines,
         )
 
         expected_start = match.end()
