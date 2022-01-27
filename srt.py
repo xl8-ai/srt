@@ -474,7 +474,11 @@ def compose(
             subtitles, start_index=start_index, in_place=in_place
         )
 
-    return "".join(subtitle.to_srt(strict=strict, eol=eol) for subtitle in subtitles)
+    result = "".join(subtitle.to_srt(strict=strict, eol=eol) for subtitle in subtitles)
+    if eol is None:
+        eol = "\n"
+    result = result[0:-len(eol)]
+    return result
 
 
 class SRTParseError(Exception):
