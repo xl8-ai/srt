@@ -477,7 +477,9 @@ def compose(
     result = "".join(subtitle.to_srt(strict=strict, eol=eol) for subtitle in subtitles)
     if eol is None:
         eol = "\n"
-    result = result[0:-len(eol)]
+    # this is to remove all new lines at the end of SRT.
+    while len(result) > len(eol) * 2 and result[-2 * len(eol): -len(eol)] == eol:
+        result = result[0:-len(eol)]
     return result
 
 
