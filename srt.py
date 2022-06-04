@@ -80,7 +80,7 @@ ZERO_TIMEDELTA = timedelta(0)
 SUBTITLE_SKIP_CONDITIONS = (
     ("No content", lambda sub: not sub.content.strip()),
     ("Start time < 0 seconds", lambda sub: sub.start < ZERO_TIMEDELTA),
-    ("Subtitle start time >= end time", lambda sub: sub.start >= sub.end),
+    ("Subtitle start time > end time", lambda sub: sub.start > sub.end),
 )
 
 SECONDS_IN_HOUR = 3600
